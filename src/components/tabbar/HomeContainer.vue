@@ -65,7 +65,7 @@ export default {
     methods: {
         getLunbotu() {
             this.$http.get('api/getlunbo').then(result => {
-                 console.log(result.body);
+                //  console.log(result.body);
                 if (result.body.status === 0) {
                     this.lunbotuList = result.body.message;
                 } else {
