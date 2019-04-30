@@ -40,7 +40,7 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
     .newsinfo-container {
         padding: 0 4px;
         .title {
@@ -54,6 +54,11 @@ export default {
             color: #226aff;
             display: flex;
             justify-content: space-between;
+        }
+        .content {
+            img {
+                width: 100%;
+            }
         }
     }
 </style>
