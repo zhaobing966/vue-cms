@@ -2,9 +2,9 @@
     <div class="cmt-container">
         <h3>发表评论</h3>
         <hr>
-        <textarea placeholder="请输入要评论的内容（最多120个字）" maxlength="120"></textarea>
+        <textarea placeholder="请输入要评论的内容（最多120个字）" maxlength="120" v-model="msg"></textarea>
 
-        <mt-button type="primary" size="large">发表评论</mt-button>
+        <mt-button type="primary" size="large" @click="postComment">发表评论</mt-button>
 
             <!-- <div class="cmt-list">
                 <div class="cmt-item">
@@ -37,7 +37,8 @@ export default {
     data() {
         return {
             pageIndex: 1, //默认展示第1页数据
-            comments: [] //所有的评论数据
+            comments: [], //所有的评论数据
+            msg: '' //评论输入的内容
         }
     },
     created() {
@@ -48,7 +49,9 @@ export default {
             this.$http.get("api/getcomments/"+ this.id +"?pageindex=" + this.pageIndex)
             .then(result => {
                 if (result.body.status === 0) {
-                    this.comments = result.body.message;
+                    // this.comments = result.body.message;
+                    // 点击加载更多按钮，把新数据拼接在原来的数据后面
+                    this.comments = this.comments.concat(result.body.message);
                 } else {
                     Toast("获取评论失败！")
                 }
@@ -57,10 +60,32 @@ export default {
         getMore() {
             this.pageIndex++;
             this.getComments();
+        },
+        postComment() {
+            // 校验是否为空内容
+            if(this.msg.trim().length === 0) {
+                return Toast("评论内容不能为空");
+            }
+
+            //发表评论
+            this.$http.post('api/postcomment/' + this.$route.params.id, {
+                content: this.msg.trim()
+            })
+            .then(function(result) {
+                if(result.body.status === 0){
+                    //1.拼接出一个评论对象
+                    var cmt = {
+                        user_name: "匿名用户",
+                        add_time: Date.now(),
+                        content: this.msg.trim()
+                    };
+                    this.comments.unshift(cmt);
+                    this.msg = "";
+                }
+            });
         }
     },
     props: ["id"]
-    
 }
 </script>
 <style lang="scss" scoped>

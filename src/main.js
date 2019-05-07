@@ -20,6 +20,8 @@ Vue.use(VueResource)
 
 // 设置请求的根路径
 Vue.http.options.root = 'http://yapi.demo.qunar.com/mock/64295'
+// 全局设置 post 时候表单数据格式组织形式 application/x-www-form-urlencoded
+Vue.http.options.emulateJSON = true;
 
 // 导入MUI的样式
 import './lib/mui/css/mui.min.css'
