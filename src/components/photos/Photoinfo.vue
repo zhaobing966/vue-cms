@@ -7,6 +7,12 @@
         </p>
         <hr>
         <!-- 缩略图区域 -->
+        <!-- 官方文档已更新，此代码有改动，没有使用 -->
+        <!-- <img class="preview-img" v-for="(item, index) in list" :src="item.src" height="100" @click="$preview.open(index, list)" :key="item.src"> -->
+        <!-- 根据vue-preview文档写得最新用法代码 -->
+        <div class="thumbs">
+            <vue-preview class="preview" :slides="slide1" @close="handleClose"></vue-preview>
+        </div>
 
         <!-- 图片内容区域 -->
 
@@ -25,11 +31,14 @@ export default {
     data() {
         return {
             id: this.$route.params.id, //从路由中获取到的图片ID
-            photoinfo: {} //图片详情
+            photoinfo: {}, //图片详情
+            // list: [] //缩略图的数组
+            slide1: []
         }
     },
     created() {
-        this.getPhotoInfo()
+        this.getPhotoInfo();
+        this.getThumbs();
     },
     methods: {
         getPhotoInfo() {
@@ -37,6 +46,26 @@ export default {
             this.$http.get("api/getimageInfo/" + this.id).then(result =>{
                 if(result.body.status === 0) {
                     this.photoinfo = result.body.message[0];
+                }
+            })
+        },
+        handleClose () {
+            console.log('close event')
+        },
+        getThumbs() {
+            //获取缩略图
+            this.$http.get("api/getthumimages/" + this.id).then(result => {
+                if(result.body.status === 0) {
+                       // 循环每个图片数据，补全图片的宽和高
+                    // <!-- 官方文档已更新，此代码有改动，没有使用 -->
+                    // result.body.message.forEach(item => {
+                    //     item.w = 600;
+                    //     item.h = 400;
+                    // });
+                    // // 把完整的数据保存到list中
+                    // this.list = result.body.message;
+                    // 根据vue-preview文档写得最新用法代码
+                    this.slide1 = result.body.message;
                 }
             })
         }
@@ -63,6 +92,12 @@ export default {
     .content{
         font-size: 13px;
         line-height: 30px;
+    }
+    .thumbs{
+        img{
+            margin: 10px;
+            box-shadow: 0 0 8px #999;
+        }
     }
 }
 </style>
